@@ -1,14 +1,13 @@
 {
-  "name": "my-blog",
+  "name": "maker-log",
   "version": "1.0.0",
-  "description": "一个简单好用的个人博客，零基础也能维护",
+  "description": "创客课程日志网站，入口文件 /html/index.html",
   "type": "module",
   "scripts": {
     "build": "node src/build.js",
-    "preview": "node src/serve.js",
-    "new": "node src/new-post.js"
+    "preview": "node src/serve.js"
   },
-  "keywords": ["blog", "static-site"],
+  "keywords": ["maker", "log", "static-site"],
   "license": "MIT",
   "dependencies": {
     "gray-matter": "^4.0.3",
