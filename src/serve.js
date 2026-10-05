@@ -29,7 +29,13 @@ const MIME = {
 
 const server = http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
-  if (urlPath === '/') urlPath = '/index.html';
+
+  // 根路径重定向到入口页 /html/index.html
+  if (urlPath === '/' || urlPath === '/index.html') {
+    res.writeHead(302, { Location: '/html/index.html' });
+    res.end();
+    return;
+  }
 
   let filePath = path.join(ROOT, urlPath);
 
@@ -55,8 +61,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`\n🌐 本地预览已启动`);
-  console.log(`   首页：   http://localhost:${PORT}/`);
-  console.log(`   文章：   http://localhost:${PORT}/posts.html`);
+  console.log(`   入口页： http://localhost:${PORT}/html/index.html`);
   console.log(`   后台：   http://localhost:${PORT}/admin/`);
   console.log(`\n   按 Ctrl + C 停止\n`);
 });

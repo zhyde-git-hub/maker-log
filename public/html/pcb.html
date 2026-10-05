@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCB 设计 - 创客课程日志</title>
+  <meta name="description" content="创客课程日志 · PCB 设计">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">创客课程日志</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="展开菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+          <a href="profile.html"><span class="nav-num">1</span>个人简介</a>
+          <a href="maker.html"><span class="nav-num">2</span>什么是创客</a>
+          <a href="git.html"><span class="nav-num">3</span>Git</a>
+          <a href="3d-design.html"><span class="nav-num">4</span>3D 设计与 3D 打印</a>
+          <a href="soldering.html"><span class="nav-num">5</span>电子焊接</a>
+          <a href="embedded.html"><span class="nav-num">6</span>嵌入式计算</a>
+          <a href="midterm.html"><span class="nav-num">7</span>中期创客项目</a>
+          <a class="active" href="pcb.html"><span class="nav-num">8</span>PCB 设计</a>
+          <a href="design-thinking.html"><span class="nav-num">9</span>设计思维</a>
+          <a href="final.html"><span class="nav-num">10</span>期末创新项目</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <div class="section-badge">第 8 板块</div>
+          <h1 class="post-title">PCB 设计</h1>
+        </header>
+        <div class="post-content">
+<h2>课程内容记录</h2>
+<p>（记录 PCB 设计这一节课的内容）</p>
+<h2>使用的软件</h2>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>（比如 立创 EDA / KiCad）</td>
+<td>绘制原理图与 PCB</td>
+</tr>
+</tbody></table>
+<h2>PCB 设计流程</h2>
+<ol>
+<li><strong>绘制原理图</strong> ——</li>
+<li><strong>元件布局</strong> ——</li>
+<li><strong>布线</strong> ——</li>
+<li><strong>DRC 检查</strong> ——</li>
+<li><strong>导出 Gerber</strong> ——</li>
+</ol>
+<h2>我的练习作品</h2>
+<h3>作品：（名称）</h3>
+<ul>
+<li><strong>功能</strong>：</li>
+<li><strong>板子尺寸</strong>：</li>
+<li><strong>层数</strong>：</li>
+<li><strong>元件数量</strong>：</li>
+</ul>
+<p><strong>原理图</strong>：</p>
+<!-- 图片：![原理图](../assets/pcb-sch.png) -->
+
+<p><strong>PCB 布局</strong>：</p>
+<!-- 图片：![PCB 布局](../assets/pcb-layout.png) -->
+
+<p><strong>实物</strong>：</p>
+<!-- 图片：![PCB 实物](../assets/pcb-real.jpg) -->
+
+<h2>设计要点</h2>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>线宽</td>
+<td></td>
+</tr>
+<tr>
+<td>间距</td>
+<td></td>
+</tr>
+<tr>
+<td>过孔</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>遇到的问题</h2>
+<p>（记录布线、封装、DRC 报错等问题及解决方式）</p>
+<h2>学习收获</h2>
+<p>（写下你的体会）</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="midterm.html"><span class="pn-label">← 上一板块</span><span class="pn-title">中期创客项目</span></a>
+        <a class="post-nav-link" href="design-thinking.html"><span class="pn-label">下一板块 →</span><span class="pn-title">设计思维</span></a>
+      </nav>
+
+      <p class="back-home"><a href="index.html">← 返回日志目录</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com/zhanghongyudegit/zhys-warehouse-1" target="_blank" rel="noopener">Gitee 仓库</a>
+      </div>
+      <p class="footer-text">© 2026 创客课程日志 · 从代码到实物</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var t = document.getElementById('navToggle');
+      var n = document.getElementById('siteNav');
+      if (t && n) {
+        t.addEventListener('click', function () {
+          n.classList.toggle('open');
+        });
+        n.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') n.classList.remove('open');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

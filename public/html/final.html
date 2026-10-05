@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>期末创新项目 - 创客课程日志</title>
+  <meta name="description" content="创客课程日志 · 期末创新项目">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">创客课程日志</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="展开菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+          <a href="profile.html"><span class="nav-num">1</span>个人简介</a>
+          <a href="maker.html"><span class="nav-num">2</span>什么是创客</a>
+          <a href="git.html"><span class="nav-num">3</span>Git</a>
+          <a href="3d-design.html"><span class="nav-num">4</span>3D 设计与 3D 打印</a>
+          <a href="soldering.html"><span class="nav-num">5</span>电子焊接</a>
+          <a href="embedded.html"><span class="nav-num">6</span>嵌入式计算</a>
+          <a href="midterm.html"><span class="nav-num">7</span>中期创客项目</a>
+          <a href="pcb.html"><span class="nav-num">8</span>PCB 设计</a>
+          <a href="design-thinking.html"><span class="nav-num">9</span>设计思维</a>
+          <a class="active" href="final.html"><span class="nav-num">10</span>期末创新项目</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <div class="section-badge">第 10 板块</div>
+          <h1 class="post-title">期末创新项目</h1>
+        </header>
+        <div class="post-content">
+<h2>项目概述</h2>
+<ul>
+<li><strong>项目名称</strong>：（填写）</li>
+<li><strong>团队成员</strong>：（填写姓名）</li>
+<li><strong>项目周期</strong>：（填写）</li>
+</ul>
+<h2>团队介绍</h2>
+<table>
+<thead>
+<tr>
+<th>成员</th>
+<th>负责部分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>（姓名）</td>
+<td>（分工）</td>
+</tr>
+<tr>
+<td>（姓名）</td>
+<td>（分工）</td>
+</tr>
+<tr>
+<td>（姓名）</td>
+<td>（分工）</td>
+</tr>
+</tbody></table>
+<h2>创意来源</h2>
+<p>（这个想法是怎么来的？解决了什么问题？）</p>
+<h2>设计思路</h2>
+<p>（整体方案，可以配上草图）</p>
+<!-- 图片：![方案草图](../assets/final-sketch.jpg) -->
+
+<h2>技术实现</h2>
+<h3>硬件部分</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>型号</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3>软件部分</h3>
+<pre><code>（核心代码或程序结构说明）
+</code></pre>
+<h2>制作过程</h2>
+<h3>阶段一：</h3>
+<h3>阶段二：</h3>
+<h3>阶段三：</h3>
+<!-- 图片：![制作过程](../assets/final-process.jpg) -->
+
+<h2>成果演示</h2>
+<!-- 图片或视频：![最终成品](../assets/final-demo.jpg) -->
+
+<p><strong>核心功能</strong>：</p>
+<p>1. 
+2. 
+3. </p>
+<p><strong>创新点</strong>：</p>
+<p>- </p>
+<p>- </p>
+<h2>遇到的问题与解决</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>项目总结</h2>
+<p>（整个学期的收获、对创客的理解、未来的想法）</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="design-thinking.html"><span class="pn-label">← 上一板块</span><span class="pn-title">设计思维</span></a>
+        <span></span>
+      </nav>
+
+      <p class="back-home"><a href="index.html">← 返回日志目录</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com/zhanghongyudegit/zhys-warehouse-1" target="_blank" rel="noopener">Gitee 仓库</a>
+      </div>
+      <p class="footer-text">© 2026 创客课程日志 · 从代码到实物</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var t = document.getElementById('navToggle');
+      var n = document.getElementById('siteNav');
+      if (t && n) {
+        t.addEventListener('click', function () {
+          n.classList.toggle('open');
+        });
+        n.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') n.classList.remove('open');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

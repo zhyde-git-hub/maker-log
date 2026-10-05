@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>嵌入式计算 - 创客课程日志</title>
+  <meta name="description" content="创客课程日志 · 嵌入式计算">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">创客课程日志</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="展开菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+          <a href="profile.html"><span class="nav-num">1</span>个人简介</a>
+          <a href="maker.html"><span class="nav-num">2</span>什么是创客</a>
+          <a href="git.html"><span class="nav-num">3</span>Git</a>
+          <a href="3d-design.html"><span class="nav-num">4</span>3D 设计与 3D 打印</a>
+          <a href="soldering.html"><span class="nav-num">5</span>电子焊接</a>
+          <a class="active" href="embedded.html"><span class="nav-num">6</span>嵌入式计算</a>
+          <a href="midterm.html"><span class="nav-num">7</span>中期创客项目</a>
+          <a href="pcb.html"><span class="nav-num">8</span>PCB 设计</a>
+          <a href="design-thinking.html"><span class="nav-num">9</span>设计思维</a>
+          <a href="final.html"><span class="nav-num">10</span>期末创新项目</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <div class="section-badge">第 6 板块</div>
+          <h1 class="post-title">嵌入式计算</h1>
+        </header>
+        <div class="post-content">
+<h2>课程内容记录</h2>
+<p>（记录嵌入式计算这一节课的内容）</p>
+<h2>使用的开发板</h2>
+<table>
+<thead>
+<tr>
+<th>开发板</th>
+<th>主控芯片</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>（比如 Arduino）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（比如 ESP32）</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>代码练习</h2>
+<h3>练习一：点亮 LED</h3>
+<pre><code class="language-c">// 在这里粘贴你的代码
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+}
+</code></pre>
+<p><strong>实现效果</strong>：（描述现象）</p>
+<!-- 图片或视频：![效果展示](../assets/embedded-1.jpg) -->
+
+<h3>练习二：（名称）</h3>
+<p>（代码 + 说明）</p>
+<h2>遇到的问题</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>原因</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码编译报错</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>上传失败</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>硬件没反应</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>学习收获</h2>
+<p>（写下你的体会）</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="soldering.html"><span class="pn-label">← 上一板块</span><span class="pn-title">电子焊接</span></a>
+        <a class="post-nav-link" href="midterm.html"><span class="pn-label">下一板块 →</span><span class="pn-title">中期创客项目</span></a>
+      </nav>
+
+      <p class="back-home"><a href="index.html">← 返回日志目录</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com/zhanghongyudegit/zhys-warehouse-1" target="_blank" rel="noopener">Gitee 仓库</a>
+      </div>
+      <p class="footer-text">© 2026 创客课程日志 · 从代码到实物</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var t = document.getElementById('navToggle');
+      var n = document.getElementById('siteNav');
+      if (t && n) {
+        t.addEventListener('click', function () {
+          n.classList.toggle('open');
+        });
+        n.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') n.classList.remove('open');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

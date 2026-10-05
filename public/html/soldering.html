@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子焊接 - 创客课程日志</title>
+  <meta name="description" content="创客课程日志 · 电子焊接">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">创客课程日志</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="展开菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+          <a href="profile.html"><span class="nav-num">1</span>个人简介</a>
+          <a href="maker.html"><span class="nav-num">2</span>什么是创客</a>
+          <a href="git.html"><span class="nav-num">3</span>Git</a>
+          <a href="3d-design.html"><span class="nav-num">4</span>3D 设计与 3D 打印</a>
+          <a class="active" href="soldering.html"><span class="nav-num">5</span>电子焊接</a>
+          <a href="embedded.html"><span class="nav-num">6</span>嵌入式计算</a>
+          <a href="midterm.html"><span class="nav-num">7</span>中期创客项目</a>
+          <a href="pcb.html"><span class="nav-num">8</span>PCB 设计</a>
+          <a href="design-thinking.html"><span class="nav-num">9</span>设计思维</a>
+          <a href="final.html"><span class="nav-num">10</span>期末创新项目</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <div class="section-badge">第 5 板块</div>
+          <h1 class="post-title">电子焊接</h1>
+        </header>
+        <div class="post-content">
+<h2>课程内容记录</h2>
+<p>（记录电子焊接这一节课的内容）</p>
+<h2>工具与材料</h2>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电烙铁</td>
+<td></td>
+</tr>
+<tr>
+<td>焊锡丝</td>
+<td></td>
+</tr>
+<tr>
+<td>助焊剂</td>
+<td></td>
+</tr>
+<tr>
+<td>吸锡带</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>焊接要点</h2>
+<ol>
+<li><strong>温度控制</strong>：</li>
+<li><strong>焊接时间</strong>：</li>
+<li><strong>焊点标准</strong>：</li>
+</ol>
+<h2>我的练习过程</h2>
+<h3>练习一：直插元件焊接</h3>
+<ul>
+<li><strong>操作步骤</strong>：</li>
+<li><strong>效果</strong>：</li>
+</ul>
+<!-- 图片：![焊点照片](../assets/solder-1.jpg) -->
+
+<h3>练习二：贴片元件焊接</h3>
+<p>（同上结构）</p>
+<h2>遇到的问题</h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>表现</th>
+<th>解决办法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>虚焊</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>连锡</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>元件烫坏</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>安全注意事项</h2>
+<ul>
+<li>（写几条）</li>
+</ul>
+<h2>学习收获</h2>
+<p>（写下你的体会）</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="3d-design.html"><span class="pn-label">← 上一板块</span><span class="pn-title">3D 设计与 3D 打印</span></a>
+        <a class="post-nav-link" href="embedded.html"><span class="pn-label">下一板块 →</span><span class="pn-title">嵌入式计算</span></a>
+      </nav>
+
+      <p class="back-home"><a href="index.html">← 返回日志目录</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com/zhanghongyudegit/zhys-warehouse-1" target="_blank" rel="noopener">Gitee 仓库</a>
+      </div>
+      <p class="footer-text">© 2026 创客课程日志 · 从代码到实物</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var t = document.getElementById('navToggle');
+      var n = document.getElementById('siteNav');
+      if (t && n) {
+        t.addEventListener('click', function () {
+          n.classList.toggle('open');
+        });
+        n.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') n.classList.remove('open');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

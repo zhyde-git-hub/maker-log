@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>什么是创客 - 创客课程日志</title>
+  <meta name="description" content="创客课程日志 · 什么是创客">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">创客课程日志</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="展开菜单">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+          <a href="profile.html"><span class="nav-num">1</span>个人简介</a>
+          <a class="active" href="maker.html"><span class="nav-num">2</span>什么是创客</a>
+          <a href="git.html"><span class="nav-num">3</span>Git</a>
+          <a href="3d-design.html"><span class="nav-num">4</span>3D 设计与 3D 打印</a>
+          <a href="soldering.html"><span class="nav-num">5</span>电子焊接</a>
+          <a href="embedded.html"><span class="nav-num">6</span>嵌入式计算</a>
+          <a href="midterm.html"><span class="nav-num">7</span>中期创客项目</a>
+          <a href="pcb.html"><span class="nav-num">8</span>PCB 设计</a>
+          <a href="design-thinking.html"><span class="nav-num">9</span>设计思维</a>
+          <a href="final.html"><span class="nav-num">10</span>期末创新项目</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <div class="section-badge">第 2 板块</div>
+          <h1 class="post-title">什么是创客</h1>
+        </header>
+        <div class="post-content">
+<h2>课程内容记录</h2>
+<p>（记录这一节课讲的内容）</p>
+<h2>我的理解</h2>
+<p>创客（Maker）是指……</p>
+<h2>关键概念</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创客</td>
+<td></td>
+</tr>
+<tr>
+<td>创客空间</td>
+<td></td>
+</tr>
+<tr>
+<td>开源硬件</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2>练习 / 作业</h2>
+<p>（记录本节课的练习内容）</p>
+<h2>图片 / 素材</h2>
+<p>（把图片放到 <code>public/assets/</code> 里，然后用下面的语法引用）</p>
+<!-- 示例：![说明文字](../assets/图片名.jpg) -->
+
+<h2>课后思考</h2>
+<p>（写下你的思考）</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="profile.html"><span class="pn-label">← 上一板块</span><span class="pn-title">个人简介</span></a>
+        <a class="post-nav-link" href="git.html"><span class="pn-label">下一板块 →</span><span class="pn-title">Git</span></a>
+      </nav>
+
+      <p class="back-home"><a href="index.html">← 返回日志目录</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com/zhanghongyudegit/zhys-warehouse-1" target="_blank" rel="noopener">Gitee 仓库</a>
+      </div>
+      <p class="footer-text">© 2026 创客课程日志 · 从代码到实物</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var t = document.getElementById('navToggle');
+      var n = document.getElementById('siteNav');
+      if (t && n) {
+        t.addEventListener('click', function () {
+          n.classList.toggle('open');
+        });
+        n.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A') n.classList.remove('open');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

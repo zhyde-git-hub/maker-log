@@ -127,37 +127,26 @@ textarea.body{min-height:400px;font-family:"SF Mono",Monaco,Menlo,Consolas,monos
         <div class="toolbar">
           <div class="toolbar-l">
             <button class="btn btn-primary" id="btnSave">保存并发布</button>
-            <button class="btn" id="btnNew">新建文章</button>
           </div>
           <span class="charcount" id="charcount"></span>
         </div>
 
-        <div class="row2">
-          <div class="field">
-            <label>文章标题</label>
-            <input type="text" id="fTitle" placeholder="写一个好标题">
-          </div>
-          <div class="field">
-            <label>发布日期</label>
-            <input type="date" id="fDate">
-          </div>
+        <div class="field">
+          <label>正在编辑的板块</label>
+          <input type="text" id="fTitle" placeholder="从右侧列表点一个板块" readonly style="background:var(--bg-soft);cursor:default">
+          <p class="hint">十个板块的标题在 <code>content/site.json</code> 里定义，如需改名请编辑那个文件。</p>
         </div>
 
         <div class="field">
-          <label>标签（用逗号分隔，可留空）</label>
-          <input type="text" id="fTags" placeholder="例如：随笔, 生活">
-        </div>
-
-        <div class="field">
-          <label>正文（支持 Markdown 语法）</label>
-          <textarea class="body" id="fBody" placeholder="## 小标题&#10;&#10;直接写正文就可以了。&#10;&#10;- 列表项一&#10;- 列表项二&#10;&#10;**加粗**、*斜体* 都支持。"></textarea>
-          <p class="hint">写完后上面的按钮点一下即可。日期决定文章排序，越新越靠前。</p>
+          <label>板块内容（支持 Markdown 语法）</label>
+          <textarea class="body" id="fBody" placeholder="## 小标题&#10;&#10;直接写内容就可以了。&#10;&#10;- 列表项一&#10;- 列表项二&#10;&#10;**加粗**、*斜体* 都支持。&#10;&#10;插入图片：![说明](../assets/图片名.jpg)"></textarea>
+          <p class="hint">图片请先放到 <code>public/assets/</code>，然后用 <code>![说明](../assets/图片名.jpg)</code> 引用。</p>
         </div>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h2>已有文章</h2>
+          <h2>十个板块</h2>
           <div class="list" id="postList"></div>
         </div>
         <div class="card">
@@ -349,7 +338,9 @@ async function deleteFile(path, message, sha) {
 }
 
 /* ---------- 解析 / 生成 Markdown ---------- */
-function parsePost(filename, raw) {
+
+/** 从 .md 原文里拆出 front-matter 和正文 */
+function parseSection(filename, raw) {
   const m = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
   const meta = {};
   let body = raw;
@@ -365,25 +356,20 @@ function parsePost(filename, raw) {
       }
     });
   }
-  const tags = meta.tags
-    ? meta.tags.replace(/^\[|\]$/g, '').split(/[,，]/).map((s) => s.trim()).filter(Boolean)
-    : [];
   return {
     file: filename,
     title: meta.title || filename.replace(/\.md$/, ''),
-    date: meta.date || '',
-    tags,
+    order: meta.order || '',
     body: body.replace(/^\n+/, ''),
   };
 }
 
-function buildMarkdown(title, date, tags, body) {
-  const tagStr = tags.length ? '[' + tags.join(', ') + ']' : '';
+/** 重新拼回 .md，保留 front-matter 的 title 和 order */
+function buildSectionMd(title, order, body) {
   return [
     '---',
     'title: ' + title,
-    'date: ' + date,
-    tagStr ? 'tags: ' + tagStr : null,
+    order ? 'order: ' + order : null,
     '---',
     '',
     body,
@@ -391,27 +377,28 @@ function buildMarkdown(title, date, tags, body) {
   ].filter((l) => l !== null).join('\n');
 }
 
-/* ---------- 加载文章列表 ---------- */
+/* ---------- 加载板块列表 ---------- */
 async function loadPosts(silent) {
   try {
     setStatus('', '读取中…');
-    const items = await api(`/repos/${cfg.repo}/contents/content/posts?ref=${encodeURIComponent(cfg.branch)}`);
+    const items = await api(`/repos/${cfg.repo}/contents/content/sections?ref=${encodeURIComponent(cfg.branch)}`);
     const list = Array.isArray(items) ? items.filter((i) => /\.md$/i.test(i.name)) : [];
 
     posts = [];
     for (const it of list) {
       const f = await getFile(it.path);
       if (f) {
-        const p = parsePost(it.name, f.content);
+        const p = parseSection(it.name, f.content);
         p.sha = it.sha;
         p.path = it.path;
         posts.push(p);
       }
     }
-    posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    // 按文件名排序（01-、02- 这种前缀保证顺序）
+    posts.sort((a, b) => a.file.localeCompare(b.file));
     renderList();
     setStatus('on', '已连接');
-    if (!silent) toast('已载入 ' + posts.length + ' 篇文章', 'ok');
+    if (!silent) toast('已载入 ' + posts.length + ' 个板块', 'ok');
   } catch (e) {
     setStatus('off', '连接失败');
     toast('读取失败：' + e.message, 'err');
@@ -421,13 +408,13 @@ async function loadPosts(silent) {
 function renderList() {
   const box = $('postList');
   if (!posts.length) {
-    box.innerHTML = '<div class="empty-list">还没有文章</div>';
+    box.innerHTML = '<div class="empty-list">没找到板块文件</div>';
     return;
   }
   box.innerHTML = posts.map((p, i) =>
     `<div class="item${current === p.file ? ' active' : ''}" data-i="${i}">
        <span class="item-t">${escHtml(p.title)}</span>
-       <span class="item-d">${escHtml(p.date || '')}</span>
+       <span class="item-d">${escHtml(String(p.order || ''))}</span>
      </div>`
   ).join('');
   box.querySelectorAll('.item').forEach((el) => {
@@ -443,26 +430,9 @@ function escHtml(s) {
 function openPost(p) {
   current = p.file;
   $('fTitle').value = p.title || '';
-  $('fDate').value = p.date || todayISO();
-  $('fTags').value = (p.tags || []).join(', ');
   $('fBody').value = p.body || '';
   updateCount();
   renderList();
-  // 编辑已有文章时，额外显示删除按钮
-  $('btnSave').textContent = '保存修改';
-}
-
-function newPost() {
-  current = null;
-  $('fTitle').value = '';
-  $('fDate').value = todayISO();
-  $('fTags').value = '';
-  $('fBody').value = '';
-  updateCount();
-  renderList();
-  $('btnSave').textContent = '保存并发布';
-  $('fTitle').focus();
-  toast('已新建草稿，填好后点保存');
 }
 
 function updateCount() {
@@ -470,74 +440,30 @@ function updateCount() {
   $('charcount').textContent = n ? n + ' 字' : '';
 }
 
-/* 保存文章 */
+/* 保存板块内容 */
 async function savePost() {
   const title = $('fTitle').value.trim();
-  const date = $('fDate').value || todayISO();
   const body = $('fBody').value;
-  const tags = $('fTags').value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
 
-  if (!title) { toast('请先填写文章标题', 'err'); $('fTitle').focus(); return; }
-  if (!body.trim()) { toast('正文还是空的，写点什么吧', 'err'); $('fBody').focus(); return; }
+  if (!current) { toast('请先从右侧点一个板块', 'err'); return; }
+  if (!body.trim()) { toast('内容还是空的，写点什么吧', 'err'); $('fBody').focus(); return; }
 
-  const md = buildMarkdown(title, date, tags, body);
+  const md = buildSectionMd(title, current.match(/^(\d+)/)?.[1] || '', body);
 
   try {
     $('btnSave').disabled = true;
     $('btnSave').textContent = '保存中…';
 
-    if (current) {
-      const f = await getFile('content/posts/' + current);
-      await putFile('content/posts/' + current, md, '更新文章：' + title, f ? f.sha : undefined);
-      toast('已更新，同文件覆盖成功', 'ok');
-    } else {
-      // 新文章：文件名用「日期-标题」保证唯一
-      const filename = date + '-' + slugify(title) + '.md';
-      const exist = await getFile('content/posts/' + filename);
-      await putFile('content/posts/' + filename, md, '新增文章：' + title, exist ? exist.sha : undefined);
-      current = filename;
-      toast('发布成功！等 1-2 分钟网站就会更新', 'ok');
-    }
-    await buildAndPublish(title);
+    const f = await getFile('content/sections/' + current);
+    await putFile('content/sections/' + current, md, '更新板块：' + title, f ? f.sha : undefined);
+    toast('已保存！请到 EdgeOne 重新上传 public 文件夹', 'ok');
+
     await loadPosts(true);
-    $('btnSave').textContent = current ? '保存修改' : '保存并发布';
   } catch (e) {
     toast('保存失败：' + e.message, 'err');
   } finally {
     $('btnSave').disabled = false;
-  }
-}
-
-/**
- * 尝试触发一次「构建」提交。
- * Gitee Pages 需要在页面上点「更新」，所以这里只做提示。
- */
-async function buildAndPublish(title) {
-  toast('已保存到仓库！请到 Gitee 仓库页面点一下「更新」部署', 'ok');
-}
-
-/* 删除文章 */
-function confirmDelete() {
-  if (!current) { toast('先选一篇文章', 'err'); return; }
-  const p = posts.find((x) => x.file === current);
-  $('mTitle').textContent = '删除文章';
-  $('mText').textContent = '确定要删除《' + (p ? p.title : current) + '》吗？删除后无法恢复。';
-  $('mask').classList.add('show');
-}
-
-async function doDelete() {
-  $('mask').classList.remove('show');
-  if (!current) return;
-  try {
-    const f = await getFile('content/posts/' + current);
-    await deleteFile('content/posts/' + current, '删除文章', f ? f.sha : undefined);
-    toast('已删除（等网站重新部署后生效）', 'ok');
-    current = null;
-    $('fTitle').value = ''; $('fBody').value = ''; $('fTags').value = '';
-    await loadPosts(true);
     $('btnSave').textContent = '保存并发布';
-  } catch (e) {
-    toast('删除失败：' + e.message, 'err');
   }
 }
 
@@ -550,8 +476,6 @@ async function loadSite() {
     $('sTitle').value = s.title || '';
     $('sSubtitle').value = s.subtitle || '';
     $('sDesc').value = s.description || '';
-    $('sAuthor').value = s.author || '';
-    $('sAvatar').value = s.avatar || '';
     window.__siteRaw = s;
     window.__siteSha = f.sha;
   } catch (e) {
@@ -565,8 +489,6 @@ async function saveSite() {
     s.title = $('sTitle').value.trim();
     s.subtitle = $('sSubtitle').value.trim();
     s.description = $('sDesc').value.trim();
-    s.author = $('sAuthor').value.trim();
-    s.avatar = $('sAvatar').value.trim() || 'assets/avatar.svg';
 
     const f = await getFile('content/site.json');
     await putFile('content/site.json', JSON.stringify(s, null, 2) + '\n', '更新网站信息', f ? f.sha : undefined);
@@ -584,7 +506,7 @@ async function connect() {
   cfg.branch = $('branch').value.trim() || 'master';
 
   if (!cfg.repo || !/^[^\/]+\/[^\/]+$/.test(cfg.repo)) { toast('仓库地址格式不对，应该像 用户名/仓库名', 'err'); return; }
-  if (!cfg.token) { toast('请填写私人令牌 ', 'err'); return; }
+  if (!cfg.token) { toast('请填写私人令牌', 'err'); return; }
 
   saveCfg();
   try {
@@ -592,10 +514,9 @@ async function connect() {
     await api('/user');
     $('setupCard').style.display = 'none';
     $('editorArea').style.display = 'block';
-    $('btnDelete').style.display = 'inline-block';
     await loadPosts(true);
     await loadSite();
-    toast('连接成功！可以开始写文章了', 'ok');
+    toast('连接成功！点右侧板块即可编辑', 'ok');
   } catch (e) {
     setStatus('off', '连接失败');
     toast('连接失败：' + e.message + '（检查令牌权限是否勾选了 projects）', 'err');
@@ -618,35 +539,20 @@ function init() {
     toast('已清除本机保存的连接信息');
   };
   $('btnSave').onclick = savePost;
-  $('btnNew').onclick = newPost;
   $('btnSaveSite').onclick = saveSite;
   $('fBody').addEventListener('input', updateCount);
-  $('mCancel').onclick = () => $('mask').classList.remove('show');
-  $('mOk').onclick = doDelete;
 
   // 键盘快捷键：Ctrl/Cmd + S 保存
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
-      if ($('editorArea').style.display !== 'none') savePost();
+      if ($('editorArea').style.display !== 'none' && current) savePost();
     }
   });
 
   // 已有配置则自动连接
   if (cfg.repo && cfg.token) connect();
 }
-
-// 删除按钮动态插入（避免新文章时误删）
-(function injectDeleteBtn() {
-  const tb = document.querySelector('.toolbar-l');
-  const b = document.createElement('button');
-  b.className = 'btn btn-danger';
-  b.id = 'btnDelete';
-  b.textContent = '删除当前文章';
-  b.style.display = 'none';
-  b.onclick = confirmDelete;
-  tb.appendChild(b);
-})();
 
 init();
 </script>

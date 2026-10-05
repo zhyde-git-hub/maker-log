@@ -1,18 +1,23 @@
 {
-  "title": "我的个人博客",
-  "subtitle": "记录想法、分享生活",
-  "description": "这里是我的个人空间，用来写下一些想法和记录。",
-  "author": "张同学",
+  "title": "创客课程日志",
+  "subtitle": "从代码到实物 · DIY 半导体的学习记录",
+  "description": "这是我在这门创客课程中的练习记录，包含十个板块的学习过程、作品和思考。",
+  "author": "张鸿宇",
   "avatar": "assets/avatar.svg",
-  "footer": "© 2026 我的个人博客 · 保持热爱，奔赴山海",
-  "nav": [
-    { "name": "首页", "url": "index.html" },
-    { "name": "全部文章", "url": "posts.html" },
-    { "name": "关于我", "url": "about.html" }
+  "footer": "© 2026 创客课程日志 · 从代码到实物",
+  "sections": [
+    { "id": "profile", "name": "个人简介", "icon": "1" },
+    { "id": "maker", "name": "什么是创客", "icon": "2" },
+    { "id": "git", "name": "Git", "icon": "3" },
+    { "id": "3d", "name": "3D 设计与 3D 打印", "icon": "4" },
+    { "id": "soldering", "name": "电子焊接", "icon": "5" },
+    { "id": "embedded", "name": "嵌入式计算", "icon": "6" },
+    { "id": "midterm", "name": "中期创客项目", "icon": "7" },
+    { "id": "pcb", "name": "PCB 设计", "icon": "8" },
+    { "id": "design-thinking", "name": "设计思维", "icon": "9" },
+    { "id": "final", "name": "期末创新项目", "icon": "10" }
   ],
   "links": [
-    { "name": "Gitee", "url": "https://gitee.com" },
-    { "name": "邮箱", "url": "mailto:hello@example.com" }
-  ],
-  "about": "你好，我是这个博客的主人。\n\n我平时喜欢阅读、写作和折腾一些新东西。这个网站用来存放我的一些想法、学习笔记和生活记录。\n\n如果我的文字对你有帮助，或者你想和我聊聊，欢迎通过下面的方式联系我。"
+    { "name": "Gitee 仓库", "url": "https://gitee.com/zhanghongyudegit/zhys-warehouse-1" }
+  ]
 }
