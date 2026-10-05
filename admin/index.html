@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写作后台</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{
+  --bg:#ffffff; --bg-soft:#f7f8fa; --text:#1f2328; --text-soft:#6b7280;
+  --text-light:#9ca3af; --border:#e8eaed; --accent:#2563eb; --accent-soft:#eff4ff;
+  --danger:#dc2626; --danger-soft:#fef2f2; --ok:#16a34a; --ok-soft:#f0fdf4;
+  --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg-soft);color:var(--text);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.hd{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.hd h1{font-size:16.5px;font-weight:650;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.hd .sub{font-size:12.5px;color:var(--text-light);font-weight:400}
+.hd-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.btn{border:1px solid var(--border);background:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+.btn-danger{color:var(--danger);border-color:#fecaca}
+.btn-danger:hover{background:var(--danger-soft);border-color:var(--danger);color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+main{padding:24px 0 80px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.card h2{font-size:15px;font-weight:650;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+.grid{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:13px;font-weight:550;color:var(--text-soft);margin-bottom:6px}
+.hint{font-size:12px;color:var(--text-light);font-weight:400;margin-top:5px;line-height:1.5}
+input[type=text],input[type=password],input[type=date],select,textarea{
+  width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;transition:.15s;font-size:14.5px
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical;line-height:1.7}
+textarea.body{min-height:400px;font-family:"SF Mono",Monaco,Menlo,Consolas,monospace;font-size:13.5px}
+
+.list{max-height:520px;overflow-y:auto;margin:-6px -6px 0}
+.item{padding:11px 12px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center;transition:.12s}
+.item:hover{background:var(--bg-soft)}
+.item.active{background:var(--accent-soft)}
+.item-t{font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-d{font-size:11.5px;color:var(--text-light);white-space:nowrap;flex:0 0 auto}
+.empty-list{color:var(--text-light);font-size:13.5px;text-align:center;padding:28px 0}
+
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2328;color:#fff;padding:11px 22px;border-radius:9px;font-size:14px;opacity:0;transition:.3s;z-index:999;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:var(--danger)}
+#toast.ok{background:var(--ok)}
+
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.mask.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:26px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+.modal h3{font-size:16.5px;margin-bottom:8px}
+.modal p{font-size:13.5px;color:var(--text-soft);margin-bottom:18px;line-height:1.65}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:4px 10px;border-radius:20px;background:var(--bg-soft);color:var(--text-soft)}
+.status .led{width:7px;height:7px;border-radius:50%;background:var(--text-light)}
+.status.on{background:var(--ok-soft);color:var(--ok)}
+.status.on .led{background:var(--ok)}
+.status.off{background:var(--danger-soft);color:var(--danger)}
+.status.off .led{background:var(--danger)}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
+.toolbar-l{display:flex;gap:8px;flex-wrap:wrap}
+.charcount{font-size:12px;color:var(--text-light)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <h1><span class="dot"></span>写作后台 <span class="sub">· 写完点保存即发布</span></h1>
+    <div class="hd-actions">
+      <span class="status" id="status"><span class="led"></span><span id="statusText">未连接</span></span>
+      <button class="btn" id="btnSettings">设置</button>
+      <a class="btn" href="../index.html" target="_blank">查看网站</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <!-- 连接配置 -->
+    <div class="card" id="setupCard">
+      <h2>第一步：连接你的 Gitee 仓库</h2>
+      <div class="field">
+        <label>仓库地址（形如 用户名/仓库名）</label>
+        <input type="text" id="repo" placeholder="例如：zhangsan/my-blog">
+        <p class="hint">打开你的 Gitee 仓库首页，浏览器地址栏 gitee.com 后面那一段就是它。</p>
+      </div>
+      <div class="field">
+        <label>私人令牌（Token）</label>
+        <input type="password" id="token" placeholder="粘贴你的 Gitee 私人令牌">
+        <p class="hint">在 Gitee「设置 → 私人令牌」里生成，勾选 projects 权限即可。令牌只保存在你自己的浏览器里，不会上传到任何地方。</p>
+      </div>
+      <div class="field">
+        <label>分支</label>
+        <input type="text" id="branch" placeholder="master">
+        <p class="hint">默认 master。如果你建仓库时选的是 main，就改成 main。</p>
+      </div>
+      <button class="btn btn-primary" id="btnConnect">保存并连接</button>
+      <button class="btn" id="btnClear" style="margin-left:8px">清除本地记录</button>
+    </div>
+
+    <!-- 编辑区 -->
+    <div id="editorArea" style="display:none">
+      <div class="card">
+        <div class="toolbar">
+          <div class="toolbar-l">
+            <button class="btn btn-primary" id="btnSave">保存并发布</button>
+            <button class="btn" id="btnNew">新建文章</button>
+          </div>
+          <span class="charcount" id="charcount"></span>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label>文章标题</label>
+            <input type="text" id="fTitle" placeholder="写一个好标题">
+          </div>
+          <div class="field">
+            <label>发布日期</label>
+            <input type="date" id="fDate">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>标签（用逗号分隔，可留空）</label>
+          <input type="text" id="fTags" placeholder="例如：随笔, 生活">
+        </div>
+
+        <div class="field">
+          <label>正文（支持 Markdown 语法）</label>
+          <textarea class="body" id="fBody" placeholder="## 小标题&#10;&#10;直接写正文就可以了。&#10;&#10;- 列表项一&#10;- 列表项二&#10;&#10;**加粗**、*斜体* 都支持。"></textarea>
+          <p class="hint">写完后上面的按钮点一下即可。日期决定文章排序，越新越靠前。</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>已有文章</h2>
+          <div class="list" id="postList"></div>
+        </div>
+        <div class="card">
+          <h2>网站信息（改完点保存）</h2>
+          <div class="field">
+            <label>网站标题</label>
+            <input type="text" id="sTitle">
+          </div>
+          <div class="field">
+            <label>副标题 / 一句话签名</label>
+            <input type="text" id="sSubtitle">
+          </div>
+          <div class="field">
+            <label>网站简介</label>
+            <textarea id="sDesc" rows="2"></textarea>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>你的名字</label>
+              <input type="text" id="sAuthor">
+            </div>
+            <div class="field">
+              <label>头像图片路径</label>
+              <input type="text" id="sAvatar" placeholder="assets/avatar.svg">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btnSaveSite">保存网站信息</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3 id="mTitle">确认操作</h3>
+    <p id="mText">确定要执行这个操作吗？</p>
+    <div class="modal-actions">
+      <button class="btn" id="mCancel">取消</button>
+      <button class="btn btn-danger" id="mOk">确定删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   写作后台逻辑
+   ============================================================ */
+const API = 'https://gitee.com/api/v5';
+const LS_KEY = 'blog_admin_cfg';
+
+const $ = (id) => document.getElementById(id);
+const cfg = { repo:'', token:'', branch:'master' };
+let posts = [];          // 已有文章 [{file, sha, title, date, tags, body}]
+let current = null;      // 当前编辑的文件名，null 表示新文章
+
+/* ---------- 提示条 ---------- */
+let toastTimer;
+function toast(msg, type) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = type || ''; }, 3000);
+}
+
+/* ---------- 本地保存配置 ---------- */
+function loadCfg() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) Object.assign(cfg, JSON.parse(raw));
+  } catch (e) {}
+  $('repo').value = cfg.repo || '';
+  $('token').value = cfg.token || '';
+  $('branch').value = cfg.branch || 'master';
+}
+
+function saveCfg() {
+  localStorage.setItem(LS_KEY, JSON.stringify(cfg));
+}
+
+function setStatus(state, text) {
+  const el = $('status');
+  el.className = 'status ' + (state || '');
+  $('statusText').textContent = text;
+}
+
+/* ---------- 工具 ---------- */
+function encPath(p) {
+  return p.split('/').map(encodeURIComponent).join('/');
+}
+
+function b64encode(str) {
+  // 正确处理中文
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return btoa(bin);
+}
+
+function b64decode(b64) {
+  const bin = atob(b64.replace(/\s/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function slugify(text) {
+  return String(text).trim().toLowerCase()
+    .replace(/[\s]+/g, '-')
+    .replace(/[^\w\u4e00-\u9fa5-]/g, '')
+    .replace(/-+/g, '-').replace(/^-|-$/g, '') || 'post';
+}
+
+function todayISO() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+}
+
+/* ---------- Gitee API ---------- */
+async function api(pathname, options = {}) {
+  const url = API + pathname;
+  const sep = url.includes('?') ? '&' : '?';
+  const opts = { ...options, headers: { ...(options.headers || {}) } };
+  let finalUrl = url;
+
+  if (opts.method === 'GET' || !opts.method) {
+    finalUrl = url + sep + 'access_token=' + encodeURIComponent(cfg.token);
+  } else {
+    opts.headers['Content-Type'] = 'application/json;charset=UTF-8';
+    const body = opts.body ? JSON.parse(opts.body) : {};
+    body.access_token = cfg.token;
+    opts.body = JSON.stringify(body);
+  }
+
+  const res = await fetch(finalUrl, opts);
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
+
+  if (!res.ok) {
+    const msg = (data && (data.error_description || data.message)) || res.status + ' 错误';
+    throw new Error(msg);
+  }
+  return data;
+}
+
+/* 读取仓库里某文件的内容，返回 {sha, content} 或 null */
+async function getFile(path) {
+  try {
+    const d = await api(`/repos/${cfg.repo}/contents/${encPath(path)}?ref=${encodeURIComponent(cfg.branch)}`);
+    return { sha: d.sha, content: d.content ? b64decode(d.content) : '' };
+  } catch (e) {
+    if (/404|不存在|not found/i.test(e.message)) return null;
+    throw e;
+  }
+}
+
+/* 写入仓库文件 */
+async function putFile(path, content, message, sha) {
+  const body = {
+    content: b64encode(content),
+    message: message || '更新内容',
+    branch: cfg.branch,
+  };
+  if (sha) body.sha = sha;
+  return api(`/repos/${cfg.repo}/contents/${encPath(path)}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+}
+
+/* 删除仓库文件 */
+async function deleteFile(path, message, sha) {
+  return api(`/repos/${cfg.repo}/contents/${encPath(path)}`, {
+    method: 'DELETE',
+    body: JSON.stringify({ message: message || '删除文章', branch: cfg.branch, sha }),
+  });
+}
+
+/* ---------- 解析 / 生成 Markdown ---------- */
+function parsePost(filename, raw) {
+  const m = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
+  const meta = {};
+  let body = raw;
+  if (m) {
+    body = m[2];
+    m[1].split('\n').forEach((line) => {
+      const i = line.indexOf(':');
+      if (i > 0) {
+        const k = line.slice(0, i).trim();
+        let v = line.slice(i + 1).trim();
+        if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+        meta[k] = v;
+      }
+    });
+  }
+  const tags = meta.tags
+    ? meta.tags.replace(/^\[|\]$/g, '').split(/[,，]/).map((s) => s.trim()).filter(Boolean)
+    : [];
+  return {
+    file: filename,
+    title: meta.title || filename.replace(/\.md$/, ''),
+    date: meta.date || '',
+    tags,
+    body: body.replace(/^\n+/, ''),
+  };
+}
+
+function buildMarkdown(title, date, tags, body) {
+  const tagStr = tags.length ? '[' + tags.join(', ') + ']' : '';
+  return [
+    '---',
+    'title: ' + title,
+    'date: ' + date,
+    tagStr ? 'tags: ' + tagStr : null,
+    '---',
+    '',
+    body,
+    '',
+  ].filter((l) => l !== null).join('\n');
+}
+
+/* ---------- 加载文章列表 ---------- */
+async function loadPosts(silent) {
+  try {
+    setStatus('', '读取中…');
+    const items = await api(`/repos/${cfg.repo}/contents/content/posts?ref=${encodeURIComponent(cfg.branch)}`);
+    const list = Array.isArray(items) ? items.filter((i) => /\.md$/i.test(i.name)) : [];
+
+    posts = [];
+    for (const it of list) {
+      const f = await getFile(it.path);
+      if (f) {
+        const p = parsePost(it.name, f.content);
+        p.sha = it.sha;
+        p.path = it.path;
+        posts.push(p);
+      }
+    }
+    posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    renderList();
+    setStatus('on', '已连接');
+    if (!silent) toast('已载入 ' + posts.length + ' 篇文章', 'ok');
+  } catch (e) {
+    setStatus('off', '连接失败');
+    toast('读取失败：' + e.message, 'err');
+  }
+}
+
+function renderList() {
+  const box = $('postList');
+  if (!posts.length) {
+    box.innerHTML = '<div class="empty-list">还没有文章</div>';
+    return;
+  }
+  box.innerHTML = posts.map((p, i) =>
+    `<div class="item${current === p.file ? ' active' : ''}" data-i="${i}">
+       <span class="item-t">${escHtml(p.title)}</span>
+       <span class="item-d">${escHtml(p.date || '')}</span>
+     </div>`
+  ).join('');
+  box.querySelectorAll('.item').forEach((el) => {
+    el.onclick = () => openPost(posts[+el.dataset.i]);
+  });
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/* ---------- 编辑器操作 ---------- */
+function openPost(p) {
+  current = p.file;
+  $('fTitle').value = p.title || '';
+  $('fDate').value = p.date || todayISO();
+  $('fTags').value = (p.tags || []).join(', ');
+  $('fBody').value = p.body || '';
+  updateCount();
+  renderList();
+  // 编辑已有文章时，额外显示删除按钮
+  $('btnSave').textContent = '保存修改';
+}
+
+function newPost() {
+  current = null;
+  $('fTitle').value = '';
+  $('fDate').value = todayISO();
+  $('fTags').value = '';
+  $('fBody').value = '';
+  updateCount();
+  renderList();
+  $('btnSave').textContent = '保存并发布';
+  $('fTitle').focus();
+  toast('已新建草稿，填好后点保存');
+}
+
+function updateCount() {
+  const n = $('fBody').value.length;
+  $('charcount').textContent = n ? n + ' 字' : '';
+}
+
+/* 保存文章 */
+async function savePost() {
+  const title = $('fTitle').value.trim();
+  const date = $('fDate').value || todayISO();
+  const body = $('fBody').value;
+  const tags = $('fTags').value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+
+  if (!title) { toast('请先填写文章标题', 'err'); $('fTitle').focus(); return; }
+  if (!body.trim()) { toast('正文还是空的，写点什么吧', 'err'); $('fBody').focus(); return; }
+
+  const md = buildMarkdown(title, date, tags, body);
+
+  try {
+    $('btnSave').disabled = true;
+    $('btnSave').textContent = '保存中…';
+
+    if (current) {
+      const f = await getFile('content/posts/' + current);
+      await putFile('content/posts/' + current, md, '更新文章：' + title, f ? f.sha : undefined);
+      toast('已更新，同文件覆盖成功', 'ok');
+    } else {
+      // 新文章：文件名用「日期-标题」保证唯一
+      const filename = date + '-' + slugify(title) + '.md';
+      const exist = await getFile('content/posts/' + filename);
+      await putFile('content/posts/' + filename, md, '新增文章：' + title, exist ? exist.sha : undefined);
+      current = filename;
+      toast('发布成功！等 1-2 分钟网站就会更新', 'ok');
+    }
+    await buildAndPublish(title);
+    await loadPosts(true);
+    $('btnSave').textContent = current ? '保存修改' : '保存并发布';
+  } catch (e) {
+    toast('保存失败：' + e.message, 'err');
+  } finally {
+    $('btnSave').disabled = false;
+  }
+}
+
+/**
+ * 尝试触发一次「构建」提交。
+ * Gitee Pages 需要在页面上点「更新」，所以这里只做提示。
+ */
+async function buildAndPublish(title) {
+  toast('已保存到仓库！请到 Gitee 仓库页面点一下「更新」部署', 'ok');
+}
+
+/* 删除文章 */
+function confirmDelete() {
+  if (!current) { toast('先选一篇文章', 'err'); return; }
+  const p = posts.find((x) => x.file === current);
+  $('mTitle').textContent = '删除文章';
+  $('mText').textContent = '确定要删除《' + (p ? p.title : current) + '》吗？删除后无法恢复。';
+  $('mask').classList.add('show');
+}
+
+async function doDelete() {
+  $('mask').classList.remove('show');
+  if (!current) return;
+  try {
+    const f = await getFile('content/posts/' + current);
+    await deleteFile('content/posts/' + current, '删除文章', f ? f.sha : undefined);
+    toast('已删除（等网站重新部署后生效）', 'ok');
+    current = null;
+    $('fTitle').value = ''; $('fBody').value = ''; $('fTags').value = '';
+    await loadPosts(true);
+    $('btnSave').textContent = '保存并发布';
+  } catch (e) {
+    toast('删除失败：' + e.message, 'err');
+  }
+}
+
+/* ---------- 网站信息 ---------- */
+async function loadSite() {
+  try {
+    const f = await getFile('content/site.json');
+    if (!f) { toast('没找到 site.json', 'err'); return; }
+    const s = JSON.parse(f.content);
+    $('sTitle').value = s.title || '';
+    $('sSubtitle').value = s.subtitle || '';
+    $('sDesc').value = s.description || '';
+    $('sAuthor').value = s.author || '';
+    $('sAvatar').value = s.avatar || '';
+    window.__siteRaw = s;
+    window.__siteSha = f.sha;
+  } catch (e) {
+    toast('读取网站信息失败：' + e.message, 'err');
+  }
+}
+
+async function saveSite() {
+  try {
+    const s = window.__siteRaw || {};
+    s.title = $('sTitle').value.trim();
+    s.subtitle = $('sSubtitle').value.trim();
+    s.description = $('sDesc').value.trim();
+    s.author = $('sAuthor').value.trim();
+    s.avatar = $('sAvatar').value.trim() || 'assets/avatar.svg';
+
+    const f = await getFile('content/site.json');
+    await putFile('content/site.json', JSON.stringify(s, null, 2) + '\n', '更新网站信息', f ? f.sha : undefined);
+    window.__siteSha = f ? f.sha : null;
+    toast('网站信息已保存', 'ok');
+  } catch (e) {
+    toast('保存失败：' + e.message, 'err');
+  }
+}
+
+/* ---------- 连接 ---------- */
+async function connect() {
+  cfg.repo = $('repo').value.trim().replace(/^https?:\/\/gitee\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  cfg.token = $('token').value.trim();
+  cfg.branch = $('branch').value.trim() || 'master';
+
+  if (!cfg.repo || !/^[^\/]+\/[^\/]+$/.test(cfg.repo)) { toast('仓库地址格式不对，应该像 用户名/仓库名', 'err'); return; }
+  if (!cfg.token) { toast('请填写私人令牌 ', 'err'); return; }
+
+  saveCfg();
+  try {
+    setStatus('', '连接中…');
+    await api('/user');
+    $('setupCard').style.display = 'none';
+    $('editorArea').style.display = 'block';
+    $('btnDelete').style.display = 'inline-block';
+    await loadPosts(true);
+    await loadSite();
+    toast('连接成功！可以开始写文章了', 'ok');
+  } catch (e) {
+    setStatus('off', '连接失败');
+    toast('连接失败：' + e.message + '（检查令牌权限是否勾选了 projects）', 'err');
+  }
+}
+
+/* ---------- 初始化 ---------- */
+function init() {
+  loadCfg();
+  $('btnConnect').onclick = connect;
+  $('btnSettings').onclick = () => {
+    $('setupCard').style.display = 'block';
+    $('editorArea').style.display = 'none';
+    setStatus('', '未连接');
+  };
+  $('btnClear').onclick = () => {
+    localStorage.removeItem(LS_KEY);
+    cfg.repo = ''; cfg.token = ''; cfg.branch = 'master';
+    $('repo').value = ''; $('token').value = ''; $('branch').value = 'master';
+    toast('已清除本机保存的连接信息');
+  };
+  $('btnSave').onclick = savePost;
+  $('btnNew').onclick = newPost;
+  $('btnSaveSite').onclick = saveSite;
+  $('fBody').addEventListener('input', updateCount);
+  $('mCancel').onclick = () => $('mask').classList.remove('show');
+  $('mOk').onclick = doDelete;
+
+  // 键盘快捷键：Ctrl/Cmd + S 保存
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if ($('editorArea').style.display !== 'none') savePost();
+    }
+  });
+
+  // 已有配置则自动连接
+  if (cfg.repo && cfg.token) connect();
+}
+
+// 删除按钮动态插入（避免新文章时误删）
+(function injectDeleteBtn() {
+  const tb = document.querySelector('.toolbar-l');
+  const b = document.createElement('button');
+  b.className = 'btn btn-danger';
+  b.id = 'btnDelete';
+  b.textContent = '删除当前文章';
+  b.style.display = 'none';
+  b.onclick = confirmDelete;
+  tb.appendChild(b);
+})();
+
+init();
+</script>
+</body>
+</html>

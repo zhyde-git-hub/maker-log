@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我是如何用一小时搭好这个博客的 - 我的个人博客</title>
+  <meta name="description" content="很多人觉得&quot;建一个自己的网站&quot;是件很技术的事。其实只要找对工具，一小时内就能搞定，而且完全免费。 为什么不用现成的博客平台 现成的平台当然方便，但有两个问题：一…">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html">
+        <span class="brand-dot"></span>
+        <span class="brand-name">我的个人博客</span>
+      </a>
+      <nav class="site-nav">
+        <a href="../index.html">首页</a>
+        <a href="../posts.html" class="active">全部文章</a>
+        <a href="../about.html">关于我</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <div class="container container-narrow">
+      <article class="post">
+        <header class="post-header">
+          <h1 class="post-title">我是如何用一小时搭好这个博客的</h1>
+          <div class="post-meta">
+            <time>2026年10月3日</time>
+          </div>
+          <div class="post-tags"><span class="tag">教程</span><span class="tag">建站</span></div>
+        </header>
+        <div class="post-content">
+<p>很多人觉得&quot;建一个自己的网站&quot;是件很技术的事。其实只要找对工具，一小时内就能搞定，而且完全免费。</p>
+<h2>为什么不用现成的博客平台</h2>
+<p>现成的平台当然方便，但有两个问题：一是你的内容存在别人的服务器上，二是页面风格很难改。而用静态网站的方式，所有文章都在你自己的仓库里，随时可以搬走。</p>
+<h2>整体思路</h2>
+<p>这个博客的实现思路非常简单：</p>
+<ol>
+<li>文章用 Markdown 文件保存，放在 <code>content/posts/</code> 目录</li>
+<li>一个生成脚本把这些文件转换成网页</li>
+<li>网页托管在 Gitee Pages 上，免费且国内访问快</li>
+</ol>
+<h2>日常维护有多简单</h2>
+<p>写完文章之后，只需要两步：</p>
+<pre><code class="language-bash">npm run build
+git add . &amp;&amp; git commit -m &quot;新文章&quot; &amp;&amp; git push
+</code></pre>
+<p>第一行生成网页，第二行把改动推送到 Gitee。等一两分钟，网站就更新了。</p>
+<p>如果你连命令行都不想碰，直接用后台编辑器，点一下保存按钮就行。</p>
+<h2>写在最后</h2>
+<p>工具是为了让人更专注于内容本身。希望这个网站能让我多写一点，少纠结一点。</p>
+
+        </div>
+      </article>
+
+      <nav class="post-nav">
+        <a class="post-nav-link" href="hello-world.html"><span class="pn-label">← 上一篇</span><span class="pn-title">你好，世界</span></a>
+        <a class="post-nav-link" href="on-persistence.html"><span class="pn-label">下一篇 →</span><span class="pn-title">关于坚持这件事</span></a>
+      </nav>
+
+      <p class="back-home"><a href="../posts.html">← 返回文章列表</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://gitee.com" target="_blank" rel="noopener">Gitee</a>
+        <a href="mailto:hello@example.com" target="_blank" rel="noopener">邮箱</a>
+      </div>
+      <p class="footer-text">© 2026 我的个人博客 · 保持热爱，奔赴山海</p>
+    </div>
+  </footer>
+</body>
+</html>

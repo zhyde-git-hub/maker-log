@@ -1,0 +1,18 @@
+{
+  "title": "我的个人博客",
+  "subtitle": "记录想法、分享生活",
+  "description": "这里是我的个人空间，用来写下一些想法和记录。",
+  "author": "张同学",
+  "avatar": "assets/avatar.svg",
+  "footer": "© 2026 我的个人博客 · 保持热爱，奔赴山海",
+  "nav": [
+    { "name": "首页", "url": "index.html" },
+    { "name": "全部文章", "url": "posts.html" },
+    { "name": "关于我", "url": "about.html" }
+  ],
+  "links": [
+    { "name": "Gitee", "url": "https://gitee.com" },
+    { "name": "邮箱", "url": "mailto:hello@example.com" }
+  ],
+  "about": "你好，我是这个博客的主人。\n\n我平时喜欢阅读、写作和折腾一些新东西。这个网站用来存放我的一些想法、学习笔记和生活记录。\n\n如果我的文字对你有帮助，或者你想和我聊聊，欢迎通过下面的方式联系我。"
+}
