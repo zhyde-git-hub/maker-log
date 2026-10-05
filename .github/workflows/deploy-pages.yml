@@ -1,19 +1,25 @@
-name: 构建并部署到 GitHub Pages
+name: 构建并部署到 GitHub Pages（可选方案）
 
-# 触发条件：推送到 main 分支时自动构建部署
-# 也可以在 GitHub 网页的 Actions 页面手动点击运行
+# 说明：
+#   这是「自动部署」方案，适合后续内容更新频繁时使用。
+#   如果你在仓库 Settings → Pages 里选的是
+#   「Deploy from a branch」+ 分支 main + 目录 / (root)，
+#   那么这个 workflow 可以不用（本仓库的构建产物已直接提交）。
+#
+#   若想改用 Actions 自动构建：
+#   1. 去 Settings → Pages，把 Source 改成 "GitHub Actions"
+#   2. 本文件里的 --out=dist 保持不变（Actions 会自己打包上传，不污染仓库）
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-# GitHub Pages 部署所需的权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 同一时间只允许一个部署任务，避免并发冲突
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -35,8 +41,7 @@ jobs:
         run: npm ci
 
       - name: 构建网站
-        # 关键：传入 base 路径，因为 GitHub Pages 的网址是
-        # https://<用户名>.github.io/<仓库名>/，站点根在子路径下
+        # base 取自仓库名，适配 GitHub Pages 的 /<仓库名>/ 子路径
         run: node src/build.js --base=/${{ github.event.repository.name }}/ --out=dist
 
       - name: 上传构建产物

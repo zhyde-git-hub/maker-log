@@ -60,7 +60,7 @@ https://zhyde-git-hub.github.io/maker-log/
 // ① 支持 --base 参数指定部署基路径
 //    node src/build.js --base=/maker-log/
 // ② 支持 --out 参数指定输出目录
-//    node src/build.js --out=docs
+//    node src/build.js --out=.
 // ③ 所有资源引用统一走 asset() 函数，自动加前缀
 function asset(p) {
   return BASE + String(p).replace(/^\/+/, '');
@@ -78,13 +78,13 @@ function asset(p) {
 ```json
 "scripts": {
   "build": "node src/build.js",
-  "build:gh": "node src/build.js --base=/maker-log/ --out=docs",
+  "build:gh": "node src/build.js --base=/maker-log/",
   "preview": "node src/serve.js"
 }
 ```
 
 - `npm run build` → 输出到 `public/`，根路径模式（Vercel / Netlify / EdgeOne 用）
-- `npm run build:gh` → 输出到 `docs/`，GitHub Pages 子路径模式
+- `npm run build:gh` → 输出到仓库根，GitHub Pages 子路径模式，同时满足作业要求
 
 ### 3. `assets/` 目录 —— 移到项目根（重要修复）
 
@@ -92,7 +92,7 @@ function asset(p) {
 `public/assets/`，但构建脚本根本不会复制它们。结果是：
 
 - Vercel 上能用 → 因为 `public/` 被手工提交进了 Git
-- 一旦输出到别的目录（如 `docs/`）→ **样式全丢**
+- 一旦输出到别的目录（如仓库根）→ **样式全丢**
 
 **修复后**：资源源文件移到项目根的 `assets/`，构建时统一复制到输出目录。
 
@@ -112,42 +112,80 @@ node src/build.js --base=/${{ github.event.repository.name }}/ --out=dist
 ```
 public/     ← 构建产物，不进仓库
 dist/       ← Actions 的构建产物，不进仓库
-# 注意：docs/ 不忽略！因为 GitHub Pages 要读它
+# 注意：仓库根的 html/ 和 assets/ 是交付产物，不能忽略
 ```
 
 ---
 
 ## 四、部署时分支与目录的选择（重点）
 
-GitHub Pages 有两种部署方式，**二选一**：
-
-### 方式 A：部署 `docs/` 目录（推荐，最简单）
+### 推荐配置（最简单）
 
 | 配置项 | 选什么 |
 |---|---|
 | **Source**（来源） | `Deploy from a branch`（从分支部署） |
 | **Branch**（分支） | `main` |
-| **Folder**（文件夹） | **`/docs`** ← 选这个 |
+| **Folder**（文件夹） | **`/ (root)`** ← 选根目录 |
 
-**为什么推荐**：
-- 不用管 Actions，设置完就生效
-- 构建结果已在本地生成好并提交，GitHub 只负责托管
-- 出问题好排查
+**为什么选根目录**：
+- 构建产物直接输出到仓库根，`html/index.html`、`assets/` 都在根下
+- 这样**同时满足课程作业要求**（仓库根能看到 `/html/index.html`）
+- Pages 和作业要求两全其美
 
-### 方式 B：GitHub Actions 自动构建
+### 备选：GitHub Actions 自动构建
 
 | 配置项 | 选什么 |
 |---|---|
 | **Source** | `GitHub Actions` |
 
-- 优点：push 后自动构建，永远是最新的
-- 缺点：Actions 在国内时快时慢；对新手来说报错不好排查
+- 优点：push 后自动构建
+- 需要把 `.github/workflows/deploy-pages.yml` 里的输出目录改成根目录
 
-> 💡 **建议先用方式 A 把网站跑起来**，确认能访问了，再考虑要不要切到方式 B。
+> 💡 **建议用推荐配置**，设置完就生效，不用管 Actions。
 
 ---
 
-## 五、具体操作步骤
+## 五、仓库最终结构（作业要求的形态）
+
+```
+maker-log/                    ← Gitee / GitHub 仓库根
+├── html/                     ← ★ 作业要求的入口目录
+│   ├── index.html            ← ★ 入口文件（/html/index.html）
+│   ├── profile.html          ← 1. 个人简介
+│   ├── maker.html            ← 2. 什么是创客
+│   ├── git.html              ← 3. Git
+│   ├── 3d-design.html        ← 4. 3D 设计与 3D 打印
+│   ├── soldering.html        ← 5. 电子焊接
+│   ├── embedded.html         ← 6. 嵌入式计算
+│   ├── midterm.html          ← 7. 中期创客项目
+│   ├── pcb.html              ← 8. PCB 设计
+│   ├── design-thinking.html  ← 9. 设计思维
+│   └── final.html            ← 10. 期末创新项目
+├── assets/                   ← 样式、头像、图标
+│   ├── style.css
+│   ├── avatar.svg
+│   └── favicon.svg
+├── index.html                ← 根跳转页（自动跳到 /html/index.html）
+├── .nojekyll                 ← Pages 配置
+├── content/                  ← 内容源码（Markdown）
+├── src/                      ← 构建脚本
+└── package.json
+```
+
+**作业提交的两个链接**：
+
+1. **Gitee 仓库链接**（作业要求提交这个）
+   ```
+   https://gitee.com/zhanghongyudegit/zhys-warehouse-1
+   ```
+2. **在线预览网址**（加分项，能直接看到网页）
+   ```
+   https://zhyde-git-hub.github.io/maker-log/
+   ```
+   入口文件直达：
+   ```
+   https://zhyde-git-hub.github.io/maker-log/html/index.html
+   ```
 
 ### 第 1 步：确认代码已推送
 
@@ -179,7 +217,7 @@ https://github.com/zhyde-git-hub/maker-log/settings/pages
 
 1. **Source** 下拉框 → 选 **`Deploy from a branch`**
 2. **Branch** 下拉框 → 选 **`main`**
-3. 右边的文件夹下拉框 → 选 **`/docs`**
+3. 右边的文件夹下拉框 → 选 **`/ (root)`**
 4. 点 **Save** 按钮
 
 ### 第 4 步：等 1~2 分钟
@@ -202,7 +240,7 @@ https://github.com/zhyde-git-hub/maker-log/settings/pages
 
 **如果样式丢了**（页面是纯黑字、没有排版）：
 说明 `/maker-log/assets/style.css` 没加载到，检查：
-1. 仓库里 `docs/assets/style.css` 存在吗？
+1. 仓库里 `assets/style.css` 存在吗？
 2. 是不是 push 时漏了文件？
 
 ---
@@ -232,8 +270,8 @@ git push github master:main
 
 **解决**：
 1. 等 2~3 分钟再刷新
-2. 回 `settings/pages` 检查：分支选了 `main`、文件夹选了 `/docs`
-3. 看仓库里 `docs/index.html` 和 `docs/html/index.html` 是否都存在
+2. 回 `settings/pages` 检查：分支选了 `main`、文件夹选了 `/ (root)`
+3. 看仓库里 `index.html` 和 `html/index.html` 是否都存在
 
 ### Q2：页面打开了，但没有样式（白底黑字）
 
@@ -241,7 +279,7 @@ git push github master:main
 
 **排查**：
 1. 浏览器按 F12 打开控制台，看 Console 里有没有红色的 404
-2. 检查仓库里 `docs/assets/style.css` 是否存在
+2. 检查仓库里 `assets/style.css` 是否存在
 3. 确认路径是 `/maker-log/assets/style.css` 而不是 `/assets/style.css`
 
 ### Q3：点板块卡片跳转后 404
@@ -264,8 +302,8 @@ GitHub Pages 在国内访问**本来就不稳定**，这是网络环境问题。
 
 ### Q5：改了内容，网站没更新
 
-1. 确认执行了 `npm run build:gh`（重新生成了 docs/）
-2. 确认 `git add -A` 把 `docs/` 的改动加进去了
+1. 确认执行了 `npm run build:gh`（重新生成了 html/ 和 assets/）
+2. 确认 `git add -A` 把 `html/` 和 `assets/` 的改动加进去了
 3. 确认 push 成功
 4. 等 1~2 分钟
 5. 强制刷新页面：**Ctrl + F5**
@@ -275,7 +313,7 @@ GitHub Pages 在国内访问**本来就不稳定**，这是网络环境问题。
 因为构建脚本就是按这个结构输出的：
 
 ```
-docs/
+仓库根/
 ├── index.html          ← 根跳转页（自动跳到 /html/index.html）
 ├── .nojekyll
 ├── assets/             ← 样式、头像、图标
@@ -308,5 +346,5 @@ https://zhyde-git-hub.github.io/maker-log/html/index.html
 ## 八、一句话总结
 
 > 运行 `npm run build:gh` → `git push` → 在仓库设置里选
-> **分支 `main` + 目录 `/docs`** → 等 2 分钟 → 访问
+> **分支 `main` + 目录 `/ (root)`** → 等 2 分钟 → 访问
 > `https://zhyde-git-hub.github.io/maker-log/`

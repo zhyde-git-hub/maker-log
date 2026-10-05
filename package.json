@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node src/build.js",
-    "build:gh": "node src/build.js --base=/maker-log/ --out=docs",
+    "build:gh": "node src/build.js --base=/maker-log/",
+    "build:gh-pages": "node src/build.js --base=/maker-log/ --out=docs",
     "preview": "node src/serve.js"
   },
   "keywords": ["maker", "log", "static-site"],

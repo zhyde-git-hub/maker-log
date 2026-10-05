@@ -317,14 +317,38 @@ function build() {
   });
 
   // 每次构建前清空输出目录，避免上次的残留文件混进来
-  if (fs.existsSync(PUBLIC)) fs.rmSync(PUBLIC, { recursive: true, force: true });
+  // 注意：当输出目录就是仓库根（--out=.）时，不能整体清空，
+  //       否则会把 src/、content/、admin/、package.json 等源码一起删掉。
+  //       所以只清理"由构建生成的那几样"。
+  const isRepoRoot = path.resolve(PUBLIC) === ROOT;
+
+  if (isRepoRoot) {
+    // 只删构建产物，绝不动源码目录（src / content / admin / assets 都是源码）
+    for (const name of ['html', '.nojekyll']) {
+      const target = path.join(PUBLIC, name);
+      if (fs.existsSync(target)) fs.rmSync(target, { recursive: true, force: true });
+    }
+    const rootIndex = path.join(PUBLIC, 'index.html');
+    if (fs.existsSync(rootIndex)) fs.rmSync(rootIndex, { force: true });
+  } else if (fs.existsSync(PUBLIC)) {
+    fs.rmSync(PUBLIC, { recursive: true, force: true });
+  }
 
   ensureDir(HTML_OUT);
 
   // 复制静态资源：assets/ → <输出目录>/assets/
   // 样式表、头像、网站图标都在这里，缺了页面就会没样式
-  if (fs.existsSync(ASSETS_SRC)) {
-    copyDir(ASSETS_SRC, path.join(PUBLIC, 'assets'));
+  //
+  // 特例：当输出目录就是仓库根时，源目录 assets/ 与产物路径完全相同，
+  //       直接跳过复制即可（否则会自己复制自己，报错或死循环）。
+  const assetsDest = path.join(PUBLIC, 'assets');
+  if (path.resolve(ASSETS_SRC) === path.resolve(assetsDest)) {
+    // 源即产物，无需复制
+    if (!fs.existsSync(ASSETS_SRC)) {
+      console.warn('⚠️  找不到 assets/ 目录，页面将缺少样式');
+    }
+  } else if (fs.existsSync(ASSETS_SRC)) {
+    copyDir(ASSETS_SRC, assetsDest);
   } else {
     console.warn('⚠️  找不到 assets/ 源目录，页面将缺少样式');
   }
@@ -344,8 +368,12 @@ function build() {
     write(path.join(PUBLIC, 'index.html'), renderRootRedirect(site));
   }
 
-  // 复制后台编辑器到 public/admin
-  if (fs.existsSync(ADMIN_SRC)) copyDir(ADMIN_SRC, path.join(PUBLIC, 'admin'));
+  // 复制后台编辑器到 <输出目录>/admin
+  // 特例：输出到仓库根时，admin/ 本身就是源码目录，无需（也不能）复制
+  const adminDest = path.join(PUBLIC, 'admin');
+  if (fs.existsSync(ADMIN_SRC) && path.resolve(ADMIN_SRC) !== path.resolve(adminDest)) {
+    copyDir(ADMIN_SRC, adminDest);
+  }
 
   // GitHub Pages 需要 .nojekyll，否则会忽略以 _ 开头的文件/目录
   write(path.join(PUBLIC, '.nojekyll'), '');
