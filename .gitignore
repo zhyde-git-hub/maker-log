@@ -15,3 +15,8 @@ Thumbs.db
 
 # 临时上传包（用于拖拽部署，不需要进仓库）
 上传包/
+
+# 构建产物（由 npm run build 生成）
+# 注意：docs/ 不忽略 —— GitHub Pages 需要读取它里面的构建结果
+public/
+dist/
