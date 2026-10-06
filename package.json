@@ -4,10 +4,8 @@
   "description": "创客课程日志网站，入口文件 /html/index.html",
   "type": "module",
   "scripts": {
-    "build": "node src/build.js",
-    "build:gh": "node src/build.js --base=/maker-log/",
-    "build:gh-pages": "node src/build.js --base=/maker-log/ --out=docs",
-    "preview": "node src/serve.js"
+    "preview": "node src/serve.js",
+    "rebuild-all": "node src/build.js --base=/maker-log/ --out=. --force"
   },
   "keywords": ["maker", "log", "static-site"],
   "license": "MIT",

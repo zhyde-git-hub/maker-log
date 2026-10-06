@@ -1,22 +1,15 @@
-# 创客课程日志 · 使用说明
+# 创客课程日志
 
-一个符合课程要求的个人日志网站，入口文件为 `/html/index.html`。
+「创客」课程的日志网站，共 **10 个板块**，每个板块一个独立网页。
+**入口文件：`/html/index.html`**
 
-## 快速开始
+在线预览：https://zhyde-git-hub.github.io/maker-log/
 
-```bash
-npm install        # 首次使用，安装依赖
-npm run build      # 生成网站
-npm run preview    # 本地预览
-```
+---
 
-## 网站结构
+## 板块一览
 
-**入口文件（作业要求）**：`public/html/index.html`
-
-十个板块，每个对应一个页面：
-
-| 序 | 板块 | 页面 |
+| 序 | 板块 | 页面文件 |
 |:--:|------|------|
 | 1 | 个人简介 | `html/profile.html` |
 | 2 | 什么是创客 | `html/maker.html` |
@@ -29,62 +22,38 @@ npm run preview    # 本地预览
 | 9 | 设计思维 | `html/design-thinking.html` |
 | 10 | 期末创新项目 | `html/final.html` |
 
-## 怎么填内容
-
-### 方式一：写作后台（推荐）
-
-打开 `你的网址/admin/`，连接 Gitee 仓库后，点右侧板块直接编辑。
-
-### 方式二：直接改文件
-
-编辑 `content/sections/` 里的 `.md` 文件：
-
-- `01-profile.md` → 个人简介
-- `02-maker.md` → 什么是创客
-- …依此类推
-
-文件名开头的数字决定顺序。
-
-### 插入图片
-
-1. 把图片放进 `public/assets/` 目录
-2. 在 Markdown 里写：`![说明文字](../assets/图片名.jpg)`
-
-## 改网站信息
-
-编辑 `content/site.json`（或用后台的「网站信息」区域）：
-
-- 网站标题、副标题、简介
-- 十个板块的名称（`sections` 数组）
-
-## 发布更新
-
-**每次更新三步：**
-
-```bash
-npm run build
-```
-
-然后把 `public` 文件夹重新上传到 EdgeOne Pages。
+---
 
 ## 目录结构
 
 ```
-content/
-  site.json          网站信息 + 十个板块定义
-  sections/          十个板块的内容（.md 文件）
-public/
-  html/              ← 网站成品（入口在这里）
-  assets/            样式、头像、图标、图片
-  admin/             写作后台
-src/
-  build.js           构建脚本
-  serve.js           本地预览
-admin/
-  index.html         后台源码
+html/                 10 个板块页 + 入口页 index.html
+assets/               样式表、头像、图标、图片
+index.html            根目录跳转页（打开站点会自动进入 html/index.html）
+如何修改网站内容.md    ★ 日常更新内容看这份
+文档/                  部署过程记录（历史资料）
 ```
 
-## 详细文档
+---
 
-- [新手上手手册.md](./新手上手手册.md)
-- [腾讯云部署操作手册.md](./腾讯云部署操作手册.md)
+## 怎么更新内容
+
+**直接在 Gitee 网页上改，不需要任何工具或命令。**
+
+具体步骤见 **《如何修改网站内容.md》**，一句话版本：
+
+> 打开 `html/` 里对应板块的文件 → 点「编辑」→ 在标注的「可编辑区域」里改中文文字 → 点「提交」。
+
+---
+
+## 早期文件说明（现在用不到，可以忽略）
+
+以下目录是网站最初的「Markdown 生成网页」方案留下的，现在内容已直接固化在 `html/` 里，
+**不要修改它们，也不要再运行里面的脚本**（会覆盖手改的网页内容）：
+
+```
+content/       Markdown 内容源 + site.json
+src/           构建脚本（build.js / serve.js）
+admin/         网页版写作后台
+package.json   依赖与脚本
+```

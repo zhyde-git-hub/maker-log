@@ -1,0 +1,48 @@
+name: 从 Gitee 同步内容
+
+# 作用：
+#   你在 Gitee 网页上改完网页内容后，这个流程会把 Gitee 上的最新
+#   html/ 、assets/ 等内容搬到 GitHub 仓库，让在线预览网址也跟着更新。
+#
+# 怎么用：
+#   GitHub 仓库页面 → Actions 标签 → 左边选「从 Gitee 同步内容」
+#   → 右边点「Run workflow」→ 点绿色按钮，等 1 分钟即可。
+#   （另外它每 3 小时也会自动跑一次，不改也行）
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出 GitHub 仓库
+        uses: actions/checkout@v4
+
+      - name: 从 Gitee 拉取最新内容
+        run: |
+          set -e
+          git config user.name "gitee-sync-bot"
+          git config user.email "gitee-sync-bot@users.noreply.github.com"
+
+          git remote add gitee https://gitee.com/zhanghongyudegit/zhys-warehouse-1.git
+          git fetch gitee master
+
+          # 用 Gitee 上的版本覆盖这几个目录/文件（含删除操作）
+          rm -rf html assets index.html
+          rm -f .nojekyll
+          git checkout gitee/master -- html assets index.html .nojekyll
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Gitee 那边没有新改动，无需同步。"
+          else
+            git commit -m "从 Gitee 同步内容 [skip ci]"
+            git push
+            echo "同步完成，GitHub Pages 会自动重新发布。"
+          fi

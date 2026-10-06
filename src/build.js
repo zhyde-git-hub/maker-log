@@ -84,9 +84,24 @@ function normalizeBase(raw) {
 
 const BASE = normalizeBase(readArg('base') ?? process.env.BASE_PATH);
 
-/** 生成绝对路径：asset('style.css') → /maker-log/assets/style.css */
+/**
+ * 资源引用（统一用相对路径）
+ *
+ * 目录结构：<站点根>/html/xxx.html 引用 <站点根>/assets/xxx
+ * 所以从页面里引用资源就是 "../assets/xxx"。
+ *
+ * 为什么用相对路径而不是 /maker-log/assets/xxx 这种绝对路径：
+ *   1. 部署到 GitHub Pages 的 /maker-log/ 子路径下照样正确
+ *   2. 你在电脑上直接双击 html/index.html 就能预览，样式也不会丢
+ *   3. HTML 更短更好读，手动改的时候不容易写错
+ */
 function asset(p) {
-  return BASE + String(p).replace(/^\/+/, '');
+  return '../' + String(p).replace(/^\/+/, '');
+}
+
+/** 板块页之间的链接：同一目录下，直接写文件名 */
+function page(id) {
+  return `${id}.html`;
 }
 
 /* ---------- 工具函数 ---------- */
@@ -158,7 +173,7 @@ function layout({ site, title, description, body, activeId = '', sections = [] }
   const navHtml = sections
     .map((s) => {
       const active = s.id === activeId ? ' class="active"' : '';
-      return `<a${active} href="${asset('html/' + s.id + '.html')}"><span class="nav-num">${esc(s.icon || '')}</span>${esc(s.title)}</a>`;
+      return `<a${active} href="${page(s.id)}"><span class="nav-num">${esc(s.icon || '')}</span>${esc(s.title)}</a>`;
     })
     .join('\n          ');
 
@@ -166,7 +181,14 @@ function layout({ site, title, description, body, activeId = '', sections = [] }
     .map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.name)}</a>`)
     .join('\n        ');
 
-  return `<!DOCTYPE html>
+  return `<!--
+  =========================================================================
+  这就是网站的一个页面，可以直接修改，不需要任何工具或命令。
+  在 Gitee 网页上：点文件右上角的「编辑」→ 改文字 → 点「提交」→ 完成。
+  【唯一规则】只改中文文字，不要动尖括号 < > 里的东西，也不要删标签。
+  =========================================================================
+-->
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -179,7 +201,7 @@ function layout({ site, title, description, body, activeId = '', sections = [] }
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="${asset('html/index.html')}">
+      <a class="brand" href="${page('index')}">
         <span class="brand-dot"></span>
         <span class="brand-name">${esc(site.title)}</span>
       </a>
@@ -228,7 +250,7 @@ ${body}
 function renderIndex(site, sections) {
   const cards = sections
     .map(
-      (s) => `        <a class="section-card" href="${asset('html/' + s.id + '.html')}">
+      (s) => `        <a class="section-card" href="${page(s.id)}">
           <span class="section-num">${esc(s.icon || '')}</span>
           <span class="section-title">${esc(s.title)}</span>
           <span class="section-arrow">→</span>
@@ -237,12 +259,14 @@ function renderIndex(site, sections) {
     .join('\n');
 
   const body = `    <div class="container">
+      <!-- ========== 可编辑区域：开始（首页文字在这里改） ========== -->
       <section class="hero">
         <img class="avatar" src="${asset('assets/avatar.svg')}" alt="${esc(site.author || '')}">
         <h1 class="hero-title">${esc(site.title)}</h1>
         <p class="hero-subtitle">${esc(site.subtitle || '')}</p>
         <p class="hero-desc">${esc(site.description || '')}</p>
       </section>
+      <!-- ========== 可编辑区域：结束 ========== -->
 
       <section class="section">
         <div class="section-head">
@@ -272,7 +296,7 @@ function renderSection(site, sec, sections) {
 
   const navLink = (s, label) =>
     s
-      ? `<a class="post-nav-link" href="${asset('html/' + s.id + '.html')}"><span class="pn-label">${label}</span><span class="pn-title">${esc(s.title)}</span></a>`
+      ? `<a class="post-nav-link" href="${page(s.id)}"><span class="pn-label">${label}</span><span class="pn-title">${esc(s.title)}</span></a>`
       : '<span></span>';
 
   const body = `    <div class="container container-narrow">
@@ -281,9 +305,19 @@ function renderSection(site, sec, sections) {
           <div class="section-badge">第 ${esc(sec.icon || '')} 板块</div>
           <h1 class="post-title">${esc(sec.title)}</h1>
         </header>
+        <!-- ========== 可编辑区域：开始（本板块的内容都在下面这里改） ==========
+             写法提示：
+               二级小标题      <h2>标题文字</h2>
+               三级小标题      <h3>标题文字</h3>
+               一段文字        <p>文字内容</p>
+               圆点列表        <ul><li>第一项</li><li>第二项</li></ul>
+               插入图片        <img src="../assets/图片名.jpg" alt="说明">
+             改完点「提交」，网站就更新了。
+        ================================================================= -->
         <div class="post-content">
 ${sec.html}
         </div>
+        <!-- ========== 可编辑区域：结束 ========== -->
       </article>
 
       <nav class="post-nav">
@@ -291,7 +325,7 @@ ${sec.html}
         ${navLink(next, '下一板块 →')}
       </nav>
 
-      <p class="back-home"><a href="${asset('html/index.html')}">← 返回日志目录</a></p>
+      <p class="back-home"><a href="${page('index')}">← 返回日志目录</a></p>
     </div>`;
 
   return layout({
@@ -321,6 +355,24 @@ function build() {
   //       否则会把 src/、content/、admin/、package.json 等源码一起删掉。
   //       所以只清理"由构建生成的那几样"。
   const isRepoRoot = path.resolve(PUBLIC) === ROOT;
+
+  // ⚠️ 安全闸门
+  // 现在仓库根的 html/ 是「可直接编辑的正式内容」，不再由本脚本维护。
+  // 一旦重跑本脚本，网页里手改过的文字会被 content/sections/*.md 覆盖掉，
+  // 所以输出到仓库根时必须显式加 --force 确认。
+  if (isRepoRoot && !process.argv.includes('--force')) {
+    console.error(`
+❌ 已停止：这次构建会覆盖仓库根目录下的 html/，把你在网页上改的内容冲掉。
+
+   现在网站内容以 html/*.html 为准，直接在 Gitee 网页上改就行，不需要重新构建。
+
+   如果你确实要用 content/sections/*.md 重新生成整站（会丢失手改内容），
+   请显式加参数：
+
+     node src/build.js --out=. --force
+`);
+    process.exit(1);
+  }
 
   if (isRepoRoot) {
     // 只删构建产物，绝不动源码目录（src / content / admin / assets 都是源码）
@@ -362,11 +414,9 @@ function build() {
   });
 
   // 生成根目录跳转页：/index.html
-  // 作用：访问站点根（如 GitHub Pages 的 /maker-log/）时自动进入 /html/index.html
+  // 作用：访问站点根（如 GitHub Pages 的 /maker-log/）时自动进入 html/index.html
   // 说明：GitHub Pages 不支持 rewrites 规则，只能用一个真实的跳转页实现
-  if (BASE !== '/') {
-    write(path.join(PUBLIC, 'index.html'), renderRootRedirect(site));
-  }
+  write(path.join(PUBLIC, 'index.html'), renderRootRedirect(site));
 
   // 复制后台编辑器到 <输出目录>/admin
   // 特例：输出到仓库根时，admin/ 本身就是源码目录，无需（也不能）复制
@@ -380,10 +430,9 @@ function build() {
 
   const ms = Date.now() - t0;
   console.log(`\n✅ 网站生成成功！`);
-  console.log(`   入口文件：${OUT_DIR}/html/index.html`);
+  console.log(`   入口文件：${OUT_DIR === '.' ? '' : OUT_DIR + '/'}html/index.html`);
   console.log(`   输出目录：${OUT_DIR}/`);
-  console.log(`   部署基路径：${BASE}`);
-  console.log(`   站点首页：${asset('html/index.html')}`);
+  console.log(`   站点首页：html/index.html（根目录 index.html 会自动跳转过去）`);
   console.log(`   板块数量：${sections.length} 个`);
   console.log(`   耗时：${ms}ms\n`);
   console.log('   板块列表：');
@@ -398,7 +447,8 @@ function build() {
  * （GitHub Pages 不支持 rewrites 规则，只能用真实文件实现跳转）
  */
 function renderRootRedirect(site) {
-  const target = asset('html/index.html');
+  // 相对路径：从站点根指向 html/index.html
+  const target = 'html/index.html';
   return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
